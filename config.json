@@ -1,9 +1,9 @@
 {
-    "pages": 10,
+    "pages": 4,
     "subpage": "new",
     "voucher": false,
     "min_price": 0,
     "max_price": 1000000,
-    "keywords": ["lego"],
+    "keywords": [],
     "blacklist": []
 }

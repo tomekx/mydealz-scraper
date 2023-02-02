@@ -3,6 +3,8 @@ from bs4 import BeautifulSoup
 import statistics
 from datetime import datetime
 
+from logger import log
+
 
 class Scraper:
     def __init__(self, pages, subpage):
@@ -18,11 +20,15 @@ class Scraper:
             r = requests.get(f'https://mydealz.de/{self.subpage}?page={i}', headers={'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36'})
 
             if r.status_code != 200:
-                print(f'error in request --- {r.status_code}')
+                log(f'Error in mydealz request --- {r.status_code}')
 
             soup = BeautifulSoup(r.text, 'html.parser')
 
-            threads = soup.find_all('article', 'thread')
+            try:
+                threads = soup.find_all('article', 'thread')
+            except:
+                log(f'Error in md scraper: invalid HTML delivered: {str(soup)}')
+                return
 
             for ind, thread in enumerate(threads):
 
@@ -68,9 +74,17 @@ class Scraper:
 
         r = requests.get(base_url, headers={'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36'})
 
+        if r.status_code != 200:
+            log(f'Error occured in ebay scraper bad status code {r.status_code}')
+            return
+
         soup = BeautifulSoup(r.text, 'html.parser')
 
-        item = soup.find_all('div', 's-item__info')
+        try:
+            item = soup.find_all('div', 's-item__info')
+        except:
+            log(f'Error occured in ebay scraper invalid HTML delivered {str(soup)} ')
+            return
 
         prices = []
 
@@ -82,39 +96,41 @@ class Scraper:
 
         for i in range(1, len(item)):
 
-            date = item[i].find_all('span', 'POSITIVE')[0].text.replace('Verkauft  ', '').split(' ')
+            try:
+                date = item[i].find_all('span', 'POSITIVE')[0].text.replace('Verkauft  ', '').split(' ')
 
-            price = item[i].find_all('span', 'POSITIVE')[1].text.replace('EUR ', '').split(',')
+                price = item[i].find_all('span', 'POSITIVE')[1].text.replace('EUR ', '').split(',')
 
-            prices.append(int(float(price[0])))
+                prices.append(int(float(price[0])))
 
-            title = item[i].find('div', 's-item__title').text.replace('Neues Angebot', '')
+                title = item[i].find('div', 's-item__title').text.replace('Neues Angebot', '')
 
-            def get_month(mname):
-                mnum = datetime.strptime(mname, '%b').month
-                return(mnum)
+                def get_month(mname):
+                    mnum = datetime.strptime(mname, '%b').month
+                    return(mnum)
 
-            day = int(date[0].replace('.', ''))
-            month = get_month(date[1].replace('Dez', 'Dec').replace('Mai', 'May').replace('Mär', 'Mar').replace('Okt', 'Oct'))
-            year = int(date[-1])
+                day = int(date[0].replace('.', ''))
+                month = get_month(date[1].replace('Dez', 'Dec').replace('Mai', 'May').replace('Mär', 'Mar').replace('Okt', 'Oct'))
+                year = int(date[-1])
 
-            insertion_date = datetime(year, month, day)
+                insertion_date = datetime(year, month, day)
 
-            time_between_insertion = datetime.now() - insertion_date
+                time_between_insertion = datetime.now() - insertion_date
 
-            if time_between_insertion.days <= 7:
-                sales_week.append(insertion_date)
-                sales_month.append(insertion_date)
-                sales_total.append(insertion_date)
-                continue
-            elif time_between_insertion.days <= 30:
-                sales_month.append(insertion_date)
-                sales_total.append(insertion_date)
-                continue
-            else:
-                sales_total.append(insertion_date)
+                if time_between_insertion.days <= 7:
+                    sales_week.append(insertion_date)
+                    sales_month.append(insertion_date)
+                    sales_total.append(insertion_date)
+                    continue
+                elif time_between_insertion.days <= 30:
+                    sales_month.append(insertion_date)
+                    sales_total.append(insertion_date)
+                    continue
+                else:
+                    sales_total.append(insertion_date)
 
-
+            except:
+                log(f'Error occured in ebay scraper in line 94: {str(item)}')
 
         try:
             med_prices = statistics.median(prices)
