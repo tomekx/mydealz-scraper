@@ -32,11 +32,14 @@ class Scraper:
 
             for ind, thread in enumerate(threads):
 
-                title = thread.find('a', 'cept-tt')['title']
+                try:
+                    title = thread.find('a', 'cept-tt')['title']
 
-                href1 = thread.find('a', 'cept-tt')
+                    href1 = thread.find('a', 'cept-tt')
 
-                href= href1['href']
+                    href= href1['href']
+                except:
+                    continue
 
                 #check if thread is a deal
                 try:

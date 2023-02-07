@@ -38,5 +38,5 @@ def main():
 
     Splitter(filtered_data).discord()
 
-if __name__ == '__main__':
-    main()
+#if __name__ == '__main__':
+ #   main()
