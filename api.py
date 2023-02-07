@@ -12,6 +12,6 @@ def config():
 
     main(config)
 
-    return 'heeloi'
+    return 'heedloi'
 
 app.run()
