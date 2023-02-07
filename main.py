@@ -1,14 +1,13 @@
-import json
 from scraper import Scraper
 from filter import Filter
 from splitter import Splitter
 from namelint import NameLint
 
 
-def main():
-    #load config
-    f = open('config.json')
-    config = json.load(f)
+def main(config):
+    # load config
+    # f = open('config.json')
+    # config = json.load(f)
 
     pages = config['pages']
     subpage = config['subpage']

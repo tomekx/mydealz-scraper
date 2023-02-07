@@ -5,15 +5,13 @@ from main import main
 
 app = Flask(__name__)
 
-@app.route("/run")
-def run():
-    main()
-    return {"res": "started script"}
-
 @app.route('/config', methods = ['POST'])
 def config():
-    data = request.form.to_dict(flat=False)
-    print(data['Hello'][0])
+    data = request.json
+    config = dict(pages = data['pages'], subpage = data['subpage'], voucher = data['voucher'], min_price = data['min_price'], max_price = data['max_price'], keywords = data['keywords'], blacklist = data['blacklist'])
+
+    main(config)
+
     return 'heeloi'
 
 app.run()
