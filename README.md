@@ -20,4 +20,4 @@ Send a POST request to *http://127.0.0.1:5000/config* with a JSON body in this f
     "blacklist": ["add", "blacklisted", "keywords", "in", "array"]
 }
 ```
-**The script starts automatically!**
+**The script then starts automatically!**
