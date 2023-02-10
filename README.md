@@ -5,6 +5,9 @@
 Add OpenAI API Key and Discord Webhook in .env file
 
 **Step 2:**
+Run *api.py*
+
+**Step 3:**
 Send a POST request to *http://127.0.0.1:5000/config* with a JSON body in this format:
 ```
 {
