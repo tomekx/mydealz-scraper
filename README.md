@@ -1,11 +1,11 @@
 # mydealz-scraper
  Script for scraping mydealz website and comparing deals with sold items on ebay to evaluate if there is possible profit.
 
-Step 1:
+**Step 1:**
 Add OpenAI API Key and Discord Webhook in .env file
 
-Step 2:
-Send a POST request to http://localhost:5000/config with a JSON body in this format:
+**Step 2:**
+Send a POST request to *http://localhost:5000/config* with a JSON body in this format:
 ```
 {
     "pages": 4, # number of pages to be scraped
@@ -17,4 +17,4 @@ Send a POST request to http://localhost:5000/config with a JSON body in this for
     "blacklist": ["add", "blacklisted", "keywords", "in", "array"]
 }
 ```
-The script starts automatically
+**The script starts automatically!**
