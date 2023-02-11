@@ -3,7 +3,10 @@
 
 **Step 1:**
 Add OpenAI API Key *(GPT-3 is used to extract to real product name from the deal title)* and Discord Webhook in .env file.
-
+```
+WEBHOOK_URL=<discord-webhook-url>
+OPENAI_API_KEY=<openai-api-key>
+```
 **Step 2:**
 Run *api.py*.
 
