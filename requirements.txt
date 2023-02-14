@@ -11,3 +11,4 @@ statistics==1.0.3.5
 DateTime==5.0
 discord-webhook==1.0.0
 python-dotenv==0.21.1
+openai==0.26.5
