@@ -1,9 +1,13 @@
-from flask import Flask
+from flask import Flask, jsonify
 from flask import request
 
 from main import main
 
 app = Flask(__name__)
+
+@app.route('/')
+def index():
+    return jsonify({"Choo Choo": "Welcome to your Flask app 🚅"})
 
 @app.route('/config', methods = ['POST'])
 def config():
