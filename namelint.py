@@ -2,32 +2,27 @@ import os
 import openai
 from dotenv import load_dotenv
 
-from logger import log
+from logger import get_module_logger
 
-class NameLint:
-    def __init__(self, title):
-        self.title = title
+# request GPT-3 to extract product name from deal title
+def lint(title):
+    load_dotenv()
 
-    def lint(self):
-        load_dotenv()
+    openai.api_key = os.getenv("OPENAI_API_KEY")
 
-        print(self.title)
+    try:
 
-        openai.api_key = os.getenv("OPENAI_API_KEY")
+        response = openai.Completion.create(
+            model="text-davinci-003",
+            prompt="Identifiziere den Produktnamen aus diesem Titel und füge keine neuen Wörter hinzu: " + title,
+            temperature=0,
+            max_tokens=256,
+            top_p=1,
+            frequency_penalty=0,
+            presence_penalty=0
+        )
 
-        try:
-
-            response = openai.Completion.create(
-                model="text-davinci-003",
-                prompt="Identifiziere den Produktnamen aus diesem Titel: " + self.title,
-                temperature=0,
-                max_tokens=256,
-                top_p=1,
-                frequency_penalty=0,
-                presence_penalty=0
-            )
-
-        except:
-            log(f'Error occured in namelint on deal {self.title}')
-            
-        return(response['choices'][0]['text'].replace('\n', ''))
+    except:
+        get_module_logger('namelint').info(f'Error occured in namelint on deal {title}')
+        
+    return(response['choices'][0]['text'].replace('\n', ''))

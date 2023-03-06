@@ -1,22 +1,13 @@
-from discord_webhook import DiscordWebhook, DiscordEmbed
-from datetime import datetime
-from dotenv import load_dotenv
-import os
+import logging
 
-
-def log(msg):
-    now = datetime.now()
-    load_dotenv()
-
-    #get timestamp
-    dt_string = now.strftime("%d/%m/%Y %H:%M:%S")
-
-    webhook = DiscordWebhook(url=os.getenv('WEBHOOK_URL'))
-
-    embed=DiscordEmbed(title="ERROR", description=msg, color=0xed1a2c)
-    embed.set_footer(text=f'{dt_string}  ⋅  mdscrape v0.1')
-
-    webhook.add_embed(embed)
-
-    webhook.execute()
+# configure logging
+def get_module_logger(mod_name):
+    logger = logging.getLogger(mod_name)
+    handler = logging.StreamHandler()
+    formatter = logging.Formatter(
+        '%(asctime)s [%(name)-12s] %(levelname)-8s %(message)s')
+    handler.setFormatter(formatter)
+    logger.addHandler(handler)
+    logger.setLevel(logging.DEBUG)
+    return logger
 

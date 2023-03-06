@@ -1,73 +1,74 @@
 import locale
+from locale import atof 
 
-from logger import log
 
-class Filter:
+from logger import get_module_logger
+
+
+# apply filters
+def filter(data, voucher, min_price, max_price, keywords, blacklist):
+
+    # set locale
+    locale.setlocale(locale.LC_ALL, 'de_DE.utf8')
+
+    # init dict
+    filtered_deals = {}
+
+    # loop throught every deal
+    for i in range(len(data)):
     
-    def __init__(self, data, voucher, min_price, max_price, keywords, blacklist):
-        self.data = data
-        self.voucher = voucher
-        self.min_price = min_price
-        self.max_price = max_price
-        self.keywords = keywords
-        self.blacklist = blacklist
+        # convert into list
+        val = list(data.values())[i]
 
-    def filter(self):
-        locale.setlocale(locale.LC_NUMERIC, 'de_DE.UTF-8')
+        # check if deal is discounted
+        if '<' in str(val['discount']):
+            val['discount'] = None
 
-        filtered_deals = {}
+        #check for keywords
+        if keywords != []:
+            res = any(ele.lower() in val['title'].lower() for ele in keywords)
+            #skip deal if keyword not found
+            if res == False:
+                continue
 
-        for i in range(len(self.data)):
-            try:
-                val = list(self.data.values())[i]
+        #check for blacklisted words
+        if blacklist != []:
+            res = any(ele.lower() in val['title'].lower() for ele in blacklist)
+            #skip deal if keyword is blacklisted
+            if res == True:
+                continue
 
-                if '<' in str(val['discount']):
-                    val['discount'] = None
+        #check for min_price & max_price    
+        if val['price'] != None and val['price'].upper() != 'KOSTENLOS':
+            p = val['price'].replace('€', '').replace('.', '')
+            
 
-                #check for keywords
-                if self.keywords != []:
-                    res = any(ele.lower() in val['title'].lower() for ele in self.keywords)
-                    #skip deal if keyword not found
-                    if res == False:
-                        continue
-
-                #check for blacklisted words
-                if self.blacklist != []:
-                    res = any(ele.lower() in val['title'].lower() for ele in self.blacklist)
-                    #skip deal if keyword is blacklisted
-                    if res == True:
-                        continue
-
-                #check for min_price & max_price    
-                if val['price'] != None and val['price'] != 'KOSTENLOS':
-                    p = val['price'].replace('€', '').replace('.', '')
-                    price = int(float(locale.atof(p)))
-                    
-                    if self.min_price and self.max_price:
-                        if self.min_price <= price <= self.max_price:
-                            #price is in range
-                            pass
-                        else:
-                            continue
-                    elif self.min_price:
-                        if price >= self.min_price:
-                            # price is above min_price
-                            pass
-                        else:
-                            continue
-                    elif self.max_price:
-                        if price <= self.max_price:
-                            # price is below max_price
-                            pass
-                        else:
-                            continue
-
-                elif val['price'] == None and self.voucher == False:
+            price = int(float(p.replace(',', '.')))
+            
+            
+            if min_price and max_price:
+                if min_price <= price <= max_price:
+                    #price is in range
+                    pass
+                else:
+                    continue
+            elif min_price:
+                if price >= min_price:
+                    # price is above min_price
+                    pass
+                else:
+                    continue
+            elif max_price:
+                if price <= max_price:
+                    # price is below max_price
+                    pass
+                else:
                     continue
 
-                filtered_deals['deal-' + str(i + 1)] = dict(title = val['title'], href = val['href'], price = val['price'], discount = val['discount'], img = val['img'])
+        elif val['price'] == None and voucher == False:
+            continue
 
-            except:
-                log(f'Error occured in filter on data set {str(self.data)}')
+        filtered_deals['deal-' + str(i + 1)] = dict(title = val['title'], href = val['href'], price = val['price'], discount = val['discount'], img = val['img'])
 
-        return(filtered_deals)
+
+    return(filtered_deals)
