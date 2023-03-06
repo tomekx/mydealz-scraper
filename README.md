@@ -8,7 +8,7 @@ WEBHOOK_URL=<discord-webhook-url>
 OPENAI_API_KEY=<openai-api-key>
 ```
 **Step 2:**
-Run *api.py*.
+Run *main.py*.
 
 **Step 3:**
 Send a POST request to *http://127.0.0.1:5000/config* with a JSON body in this format:
