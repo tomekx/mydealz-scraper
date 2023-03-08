@@ -100,7 +100,8 @@ def ebay_scrape(pd_name):
         return
     
     # parse number of results
-    count = soup.find('h1', 'srp-controls__count-heading').find('span', 'BOLD').text
+    count = soup.find('h1', 'srp-controls__count-heading').find('span', 'BOLD').text.replace('.', '')
+
 
     prices = []
 
