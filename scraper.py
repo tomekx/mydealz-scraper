@@ -98,6 +98,9 @@ def ebay_scrape(pd_name):
     except:
         get_module_logger('ebay-scraper').info('ebay request delivered invalid html')
         return
+    
+    # parse number of results
+    count = soup.find('h1', 'srp-controls__count-heading').find('span', 'BOLD').text
 
     prices = []
 
@@ -107,12 +110,23 @@ def ebay_scrape(pd_name):
 
     sales_total = []
 
+    item_count = len(item)
+
+    if item_count == 0:
+        return([0, 0, 0, 0, base_url])
+
+    if int(count) <= len(item):
+        item_count = int(count) + 1
+
     # loop through every item
-    for i in range(1, len(item)):
+    for i in range(1, item_count):
 
         date = item[i].find_all('span', 'POSITIVE')[0].text.replace('Verkauft  ', '').split(' ')
 
-        price = item[i].find_all('span', 'POSITIVE')[1].text.replace('EUR ', '').split(',')
+        try:
+            price = item[i].find_all('span', 'POSITIVE')[1].text.replace('EUR ', '').split(',')
+        except:
+            continue
 
         prices.append(int(float(price[0].replace('.', ''))))
 
